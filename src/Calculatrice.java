@@ -8,6 +8,7 @@ public class Calculatrice {
     private static double result = 0;
     private static String operator = "";
     private static boolean isNewInput = true;
+    private static boolean isError = false;
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Calculatrice");
@@ -38,14 +39,24 @@ public class Calculatrice {
                 public void actionPerformed(ActionEvent e) {
                     String command = button.getText();
 
+                    // Bloquer toute action sauf "CE" et "C" si en état d'erreur
+                    if (isError && !(command.equals("CE") || command.equals("C"))) {
+                        textField.setText("Erreur");
+                        return;
+                    }
+
                     try {
                         switch (command) {
-                            case "CE" -> textField.setText("0");
+                            case "CE" -> {
+                                textField.setText("0");
+                                isError = false;
+                            }
                             case "C" -> {
                                 textField.setText("0");
                                 result = 0;
                                 operator = "";
                                 isNewInput = true;
+                                isError = false;
                             }
                             case "<--" -> {
                                 String current = textField.getText();
@@ -61,6 +72,7 @@ public class Calculatrice {
                                     textField.setText(String.valueOf(Math.sqrt(value)));
                                 } else {
                                     textField.setText("Erreur");
+                                    isError = true;
                                 }
                             }
                             case "x^2" -> {
@@ -73,6 +85,7 @@ public class Calculatrice {
                                     textField.setText(String.valueOf(1 / value));
                                 } else {
                                     textField.setText("Erreur");
+                                    isError = true;
                                 }
                             }
                             case "+/-" -> {
@@ -90,6 +103,7 @@ public class Calculatrice {
                                             result /= secondOperand;
                                         } else {
                                             textField.setText("Erreur");
+                                            isError = true;
                                             return;
                                         }
                                     }
@@ -104,6 +118,12 @@ public class Calculatrice {
                                 isNewInput = true;
                             }
                             default -> {
+                                if (command.equals(".")) {
+                                    if (textField.getText().contains(".")) {
+                                        return;
+                                    }
+                                }
+
                                 if (isNewInput) {
                                     textField.setText(command.equals(".") ? "0." : command);
                                     isNewInput = false;
@@ -114,6 +134,7 @@ public class Calculatrice {
                         }
                     } catch (NumberFormatException ex) {
                         textField.setText("Erreur");
+                        isError = true;
                     }
                 }
             });
