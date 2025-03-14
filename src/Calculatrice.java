@@ -39,7 +39,6 @@ public class Calculatrice {
                 public void actionPerformed(ActionEvent e) {
                     String command = button.getText();
 
-                    // Bloquer toute action sauf "CE" et "C" si en état d'erreur
                     if (isError && !(command.equals("CE") || command.equals("C"))) {
                         textField.setText("Erreur");
                         return;
